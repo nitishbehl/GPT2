@@ -20,7 +20,7 @@ class CasualSelfAttention(nn.Module):
         self.c_proj.NANOGPT_SCALE_INIT = 1
         self.n_head = config.n_head
         self.n_embd = config.n_embd
-        self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size)).view(1, 1, config.block_size, config.block_size))
+        self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size)).view(1, 1, config.block_size, config.block_size), persistent=False)
 
     def forward(self, x):
         B, T, C = x.size()
@@ -53,14 +53,14 @@ class MLP(nn.Module):
 class Block(nn.Module):
     def __init__(self, config):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.n_embd)
+        self.ln1 = nn.LayerNorm(config.n_embd)
         self.attn = CasualSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.n_embd)
+        self.ln2 = nn.LayerNorm(config.n_embd)
         self.mlp = MLP(config)
 
     def forward(self, x):
-        x = x + self.attn(self.ln_1(x))
-        x = x + self.mlp(self.ln_2(x))
+        x = x + self.attn(self.ln1(x))
+        x = x + self.mlp(self.ln2(x))
         return x
 
 @dataclass
@@ -85,7 +85,7 @@ class GPT(nn.Module):
         self.transformer.wte.weight = self.lm_head.weight
         self.apply(self._init_weights)
 
-    def _init_weightgit commit -m "first commit"git commit -m "first commit"s(self, module):
+    def _init_weights(self, module):
         if isinstance(module, nn.Linear):
             std = 0.02
             if hasattr(module, 'NANOGPT_SCALE_INIT'):
