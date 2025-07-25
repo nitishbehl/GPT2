@@ -13,3 +13,5 @@ Phase2/checkpoints/
 Phase3/checkpoints/
 Phase4/checkpoints/
 
+*.pt
+checkpoints/
