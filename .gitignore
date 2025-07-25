@@ -6,3 +6,10 @@ __pycache__/
 *.bin
 .DS_Store
 *.egg-info/
+# Ignore large model checkpoint files
+*.pt
+checkpoints/
+Phase2/checkpoints/
+Phase3/checkpoints/
+Phase4/checkpoints/
+
