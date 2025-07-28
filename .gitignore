@@ -15,3 +15,9 @@ Phase4/checkpoints/
 
 *.pt
 checkpoints/
+node_modules/
+dist/
+.env
+*.log
+.vscode/
+

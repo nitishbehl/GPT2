@@ -1,62 +1,114 @@
-import { useState } from 'react';
-import './index.css';
+import React, { useState } from 'react';
+
+// Set your backend API base URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 function App() {
   const [prompt, setPrompt] = useState('');
   const [output, setOutput] = useState('');
-  const [model, setModel] = useState('pretrained');
+  const [loading, setLoading] = useState(false);
+  const [model, setModel] = useState('finetuned'); // Default model
+
+  // Handle form submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    generateText();
+  };
 
   const generateText = async () => {
+    if (!prompt.trim()) {
+      setOutput(' Please enter a prompt.');
+      return;
+    }
+    if (!model) {
+      setOutput(' Please select a model.');
+      return;
+    }
+
+    setLoading(true);
+    setOutput(''); // Clear previous output
+
     try {
-      const res = await fetch('http://localhost:8000/generate', {
+      const response = await fetch(`${API_BASE_URL}/generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, model })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: prompt, // matches FastAPI: prompt
+          model: model,   // matches FastAPI: model
+        }),
       });
-      const data = await res.json();
-      console.log(data); // <-- check browser console
-      setOutput(data.output || '⚠️ No output received');
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setOutput(' Error contacting backend');
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const message = data?.error || `Error ${response.status}`;
+        setOutput(` ${message}`);
+        return;
+      }
+
+      if (data && data.generated) {
+        setOutput(data.generated);
+      } else {
+        setOutput('⚠️ Unexpected response from the server.');
+      }
+    } catch (error) {
+      console.error('Request failed:', error);
+      setOutput(' Error connecting to backend.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 mt-10">
-      <h1 className="text-3xl font-bold">GPT-2 Comparison Tool</h1>
+    <div style={{ maxWidth: 600, margin: "auto", padding: 20, fontFamily: "Arial, sans-serif" }}>
+      <h2>Text Generation</h2>
 
-      <textarea
-        className="border w-1/2 p-2"
-        rows={4}
-        placeholder="Enter your prompt..."
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-      />
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Type your prompt here"
+          style={{ width: "100%", padding: 8, marginBottom: 10, fontSize: 16 }}
+          disabled={loading}
+        />
 
-      <select
-        className="border p-2"
-        value={model}
-        onChange={(e) => setModel(e.target.value)}
-      >
-        <option value="pretrained">Pretrained</option>
-        <option value="finetuned">Fine-Tuned</option>
-        <option value="earlyexit">Early Exit</option>
-      </select>
+        <select
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          style={{ width: "100%", padding: 8, marginBottom: 10, fontSize: 16 }}
+          disabled={loading}
+        >
+          <option value="finetuned">Finetuned</option>
+          <option value="earlyexit">Early-Exit</option>
+          <option value="pretrained">Pretrained</option>
+        </select>
 
-      <button onClick={generateText} className="bg-blue-600 text-white px-4 py-2 rounded">
-        Generate
-      </button>
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: 10,
+            fontSize: 16,
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "Generating..." : "Generate"}
+        </button>
+      </form>
 
-      {/* OUTPUT */}
-      {output && (
-        <div className="w-1/2 mt-6">
-          <h2 className="text-xl font-semibold mb-2">Generated Output:</h2>
-          <pre className="bg-gray-100 p-4 whitespace-pre-wrap border rounded">
-            {output}
-          </pre>
-        </div>
-      )}
+      <div style={{ marginTop: 20 }}>
+        <h3>Output:</h3>
+        <pre style={{ whiteSpace: "pre-wrap", backgroundColor: "#f4f4f4", padding: 10, minHeight: 100 }}>
+          {output || <span style={{ color: "#888" }}>No output yet.</span>}
+        </pre>
+      </div>
     </div>
   );
 }

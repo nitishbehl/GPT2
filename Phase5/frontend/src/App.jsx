@@ -9,11 +9,12 @@ function App() {
     const res = await fetch('http://127.0.0.1:8000/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input, model })
+      body: JSON.stringify({ prompt: input, model })  
     });
     const data = await res.json();
     setOutput(data.output);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -34,7 +35,7 @@ function App() {
           onChange={(e) => setModel(e.target.value)}
         >
           <option value="pretrained">Pretrained</option>
-          <option value="fine-tuned">Fine-tuned</option>
+          <option value="finetuned">Fine-tuned</option>
           <option value="early-exit">Early Exit</option>
         </select>
 
