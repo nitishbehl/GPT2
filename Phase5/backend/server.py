@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from generate_text import generate_text
+from .generate_text import generate_text
 
 app = FastAPI()
 

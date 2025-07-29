@@ -2,9 +2,12 @@ import sys
 import torch
 import torch.nn.functional as F
 import tiktoken
+import time
+
+# Add Phase1 and Phase3 directories to sys.path
+sys.path.append("/Users/nitishbehl/Desktop/gpt2_project/Phase3")
 from early_exit import EarlyExitClassifier
 
-# Add Phase1 directory to sys.path to import GPT model code
 sys.path.append("/Users/nitishbehl/Desktop/gpt2_project/Phase1")
 from train_gpt2 import GPT, GPTConfig
 
@@ -14,14 +17,16 @@ enc = tiktoken.get_encoding("gpt2")
 # Load early exit classifier
 early_exit_classifier = EarlyExitClassifier().to(device)
 early_exit_classifier.load_state_dict(
-    torch.load("/Users/nitishbehl/Desktop/gpt2_project/Phase3/checkpoints/early_exit_classifier.pt", map_location=device)
+    torch.load(
+        "/Users/nitishbehl/Desktop/gpt2_project/Phase3/checkpoints/early_exit_classifier.pt",
+        map_location=device,
+    )
 )
 early_exit_classifier.eval()
 
-# Paths to your saved checkpoints for each model
 MODEL_PATHS = {
     "finetuned": "/Users/nitishbehl/Desktop/gpt2_project/Phase2/checkpoints/fine_tuned_gpt2_wikitext.pt",
-    "pretrained": "/Users/nitishbehl/Desktop/gpt2_project/Phase1/checkpoints/pretrained_gpt2.pt",  # Update with actual pretrained path if exists
+    "pretrained": "/Users/nitishbehl/Desktop/gpt2_project/Phase1/checkpoints/pretrained_gpt2.pt",
     "earlyexit": "/Users/nitishbehl/Desktop/gpt2_project/Phase3/checkpoints/fine_tuned_gpt2_wikitext.pt",
 }
 
@@ -64,17 +69,22 @@ def generate_text(prompt="Hello", model="finetuned", max_length=50):
     x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0).to(device)
 
     with torch.no_grad():
-        for _ in range(max_length - x.size(1)):
+        for _ in range(max_length):
             if model == "earlyexit":
                 logits, all_hidden = model_instance(x, return_all_hidden=True)
-                hidden9 = all_hidden[9]
-                logits = early_exit_classifier(hidden9)
+                hidden9 = all_hidden[9]  # Shape: [1, seq_len, 384]
+                last_hidden = hidden9[:, -1, :]  # Only take last token
+                logits = early_exit_classifier(last_hidden)
             else:
-                logits, _ = model_instance(x)
-
-            logits = logits[:, -1, :]
+                logits_out = model_instance(x)
+                if isinstance(logits_out, tuple):
+                    logits = logits_out[0]
+                else:
+                    logits = logits_out
+                logits = logits[:, -1, :]
             probs = F.softmax(logits, dim=-1)
             next_token = torch.multinomial(probs, num_samples=1)
             x = torch.cat([x, next_token], dim=1)
 
-    return enc.decode(x[0].tolist())
+    output_tokens = x[0].tolist()
+    return enc.decode(output_tokens)

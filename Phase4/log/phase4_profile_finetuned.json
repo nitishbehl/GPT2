@@ -1,0 +1,122 @@
+[
+    {
+        "layer": 0,
+        "time_ms": 32.273,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 1,
+        "time_ms": 0.819,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 2,
+        "time_ms": 0.591,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 3,
+        "time_ms": 0.595,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 4,
+        "time_ms": 0.56,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 5,
+        "time_ms": 0.571,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 6,
+        "time_ms": 0.566,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 7,
+        "time_ms": 0.563,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 8,
+        "time_ms": 0.57,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 9,
+        "time_ms": 0.727,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 10,
+        "time_ms": 0.601,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    },
+    {
+        "layer": 11,
+        "time_ms": 0.614,
+        "memory_mb": 0.0,
+        "output_shape": [
+            1,
+            10,
+            384
+        ]
+    }
+]
