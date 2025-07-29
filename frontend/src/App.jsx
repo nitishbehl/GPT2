@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function App() {
+const App = () => {
   const [input, setInput] = useState('');
   const [model, setModel] = useState('pretrained');
   const [output, setOutput] = useState('');
@@ -40,20 +40,20 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
-      <div className="w-full max-w-2xl bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">GPT-2 Comparison Tool</h1>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-2xl mx-auto bg-white shadow p-6 rounded-xl">
+        <h1 className="text-2xl font-bold mb-4 text-center">GPT-2 Comparison Tool</h1>
 
         <textarea
           rows="4"
-          className="w-full border border-gray-300 p-3 rounded-md mb-4"
+          className="w-full border p-2 mb-4 rounded"
           placeholder="Enter your prompt..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
 
         <select
-          className="w-full border border-gray-300 p-2 rounded-md mb-4"
+          className="w-full border p-2 mb-4 rounded"
           value={model}
           onChange={(e) => setModel(e.target.value)}
         >
@@ -83,6 +83,7 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
+
