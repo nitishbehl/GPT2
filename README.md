@@ -55,13 +55,9 @@ Edit
 - Backend: FastAPI + CORS + prompt handler (`server.py`)
 - Output shown instantly on frontend
 
----
 
-## 🌐 Demo UI Preview
 
-![UI Screenshot](./Phase5/screenshots/ui_preview.png) <!-- Replace with actual screenshot path -->
 
----
 
 ## 🚀 How to Run Locally
 
